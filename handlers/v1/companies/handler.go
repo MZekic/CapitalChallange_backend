@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/u2takey/go-utils/uuid"
 )
 
 // GetCompanyInfo godoc
@@ -25,21 +26,23 @@ func GetCompanyInfo(c *gin.Context) {
 	var req GetCompanyInfoRequest
 	req.Ticker = c.Param("ticker")
 
-	_, err := dbhelper.GetCompanyInfoByTicker(req.Ticker)
+	res, err := dbhelper.GetCompanyInfoByTicker(req.Ticker)
 	if err == sql.ErrNoRows {
 		company, err := polygon.GetCompanyInfoByTicker(req.Ticker)
 		if err != nil {
 			c.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
-		//todo add to database company info
 
 		c.JSON(http.StatusOK, company)
+		company.ID = uuid.NewUUID()
+		go dbhelper.InsertCompany(company)
 		return
 	} else if err != sql.ErrNoRows && err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
+	c.JSON(http.StatusOK, res)
 }
 
 /*
