@@ -1,0 +1,81 @@
+basePath: /v1
+definitions:
+  models.Companies:
+    properties:
+      created_at:
+        type: string
+      currency_name:
+        type: string
+      description:
+        type: string
+      homepage_url:
+        type: string
+      id:
+        type: string
+      locale:
+        type: string
+      logo_url:
+        type: string
+      market:
+        type: string
+      name:
+        type: string
+      primary_exchange:
+        type: string
+      ticker:
+        type: string
+      total_employees:
+        type: number
+      type:
+        type: string
+      updated_at:
+        type: string
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server celler server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /companies/{ticker}:
+    get:
+      consumes:
+      - application/json
+      description: get company info by Ticker
+      parameters:
+      - description: Ticker
+        in: path
+        name: ticker
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Companies'
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Get Company info
+      tags:
+      - companies
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"
