@@ -3,6 +3,7 @@ package v1Companies
 import (
 	dbhelper "capital-challenge-server/dbHelper"
 	"capital-challenge-server/polygon"
+	utils "capital-challenge-server/utils"
 	"database/sql"
 	"net/http"
 
@@ -31,18 +32,23 @@ func GetCompanyInfo(c *gin.Context) {
 		company, err := polygon.GetCompanyInfoByTicker(req.Ticker)
 		if err != nil {
 			c.AbortWithStatus(http.StatusInternalServerError)
+			utils.Log(c, http.StatusInternalServerError)
 			return
 		}
 
 		c.JSON(http.StatusOK, company)
 		company.ID = uuid.NewUUID()
 		go dbhelper.InsertCompany(company)
+		utils.Log(c, http.StatusOK)
 		return
 	} else if err != sql.ErrNoRows && err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
+		utils.Log(c, http.StatusInternalServerError)
 		return
 	}
+
 	c.JSON(http.StatusOK, res)
+	utils.Log(c, http.StatusOK)
 }
 
 /*
