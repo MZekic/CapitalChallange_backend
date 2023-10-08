@@ -8,7 +8,7 @@ type CompanyStock struct {
 	ClosePrice                 float32    `json:"close_price" db:"close_price"`
 	HighestPrice               float32    `json:"highest_price" db:"highest_price"`
 	LowestPrice                float32    `json:"lowest_price" db:"lowest_price"`
-	NumberOfTransactions       string     `json:"number_of_transactions" db:"number_of_transactions"`
+	NumberOfTransactions       int        `json:"number_of_transactions" db:"number_of_transactions"`
 	OpenPrice                  float32    `json:"open_price" db:"open_price"`
 	OTC                        bool       `json:"otc" db:"otc"`
 	TradingVolume              int        `json:"trading_volume" db:"trading_volume"`

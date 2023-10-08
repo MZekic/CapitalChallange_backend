@@ -9,16 +9,7 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "termsOfService": "http://swagger.io/terms/",
-        "contact": {
-            "name": "API Support",
-            "url": "http://www.swagger.io/support",
-            "email": "support@swagger.io"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        },
+        "contact": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -52,6 +43,29 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/models.Companies"
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/company-stock": {
+            "get": {
+                "description": "get the daily information about company stocks",
+                "tags": [
+                    "company_stock"
+                ],
+                "summary": "Get Daily Company Stock",
+                "responses": {
+                    "200": {
+                        "description": "OK"
                     },
                     "400": {
                         "description": "Bad Request"
@@ -119,10 +133,6 @@ const docTemplate = `{
         "BasicAuth": {
             "type": "basic"
         }
-    },
-    "externalDocs": {
-        "description": "OpenAPI",
-        "url": "https://swagger.io/resources/open-api/"
     }
 }`
 
@@ -132,8 +142,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8080",
 	BasePath:         "/v1",
 	Schemes:          []string{},
-	Title:            "Swagger Example API",
-	Description:      "This is a sample server celler server.",
+	Title:            "Capital-Challenge API",
+	Description:      "Capital-Challenge backend API.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",
