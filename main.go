@@ -39,7 +39,7 @@ func main() {
 	}
 	err = database.DBConnection()
 	if err != nil {
-		log.Fatalf("Error while initial connection to DB: %s", err)
+		log.Fatalf("Error with initial connection to DB: %s", err)
 	}
 
 	polygon.StartPolygonClient()
