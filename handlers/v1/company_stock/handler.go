@@ -5,6 +5,7 @@ import (
 	"capital-challenge-server/models"
 	"capital-challenge-server/polygon"
 	utils "capital-challenge-server/utils"
+	"database/sql"
 	"log"
 	"net/http"
 
@@ -121,19 +122,44 @@ func BuyCompanyStocks(c *gin.Context) {
 		utils.Log(c, http.StatusInternalServerError)
 		return
 	}
-	var userAssets models.UserAssets
-	userAssets.ID = uuid.NewUUID()
-	userAssets.Ticker = companyStock.Ticker
-	userAssets.Quantity = req.Quantity
-	userAssets.UserID = user.ID
-	userAssets.GameNumber = user.CurrentGameNumber
-	err = dbHelper.InsertUserAsset(userAssets)
+
+	userAssets, err := dbHelper.GetUserAssetsByTicker(companyStock.Ticker, user.ID)
+
+	if err == sql.ErrNoRows {
+		var userAssets models.UserAssets
+		userAssets.ID = uuid.NewUUID()
+		userAssets.Ticker = companyStock.Ticker
+		userAssets.Quantity = req.Quantity
+		userAssets.UserID = user.ID
+		userAssets.GameNumber = user.CurrentGameNumber
+		err = dbHelper.InsertUserAsset(userAssets)
+		if err != nil {
+			c.AbortWithStatus(http.StatusInternalServerError)
+			log.Println(err)
+			utils.Log(c, http.StatusInternalServerError)
+			return
+		}
+		c.JSON(http.StatusOK, userTransaction)
+		utils.Log(c, http.StatusOK)
+		return 
+
+	} else if err != sql.ErrNoRows && err != nil {
+		c.AbortWithStatus(http.StatusInternalServerError)
+		log.Println(err)
+		utils.Log(c, http.StatusInternalServerError)
+		return
+	}
+
+	currentQuantity := userAssets.Quantity + req.Quantity
+	err = dbHelper.UpdateUserAssetsOnBuyByTicker(userAssets.ID, currentQuantity)
+
 	if err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		log.Println(err)
 		utils.Log(c, http.StatusInternalServerError)
 		return
 	}
-	c.JSON(http.StatusOK, userTransaction)
 
+	c.JSON(http.StatusOK, userTransaction)
+	utils.Log(c, http.StatusOK)
 }
