@@ -47,18 +47,18 @@ func GetDailyCompanyStock(c *gin.Context) {
 	utils.Log(c, http.StatusOK)
 }
 
-// BuyCompanyStock godoc
-// @Summary      BuyCompanyStock
-// @Description  buy the selected amount of company stock
+// BuyOrSellCompanyStock godoc
+// @Summary      BuyOrSellCompanyStock
+// @Description  buy or sell the selected amount of company stock
 // @Tags         company_stock
 // @Param        user_id   path      string  true  "user_id"
-// @Param        request   body      BuyCompanyStocksRequest  true  "request"
+// @Param        request   body      BuyOrSellCompanyStocksRequest  true  "request"
 // @Success      200 {object} models.UserTransactions
 // @Failure      400
 // @Failure      404
 // @Failure      500
 // @Router       /company-stocks/{user_id} [post]
-func BuyCompanyStocks(c *gin.Context) {
+func BuyOrSellCompanyStocks(c *gin.Context) {
 
 	userID := c.Param("user_id")
 	user, err := dbHelper.GetUserByID(userID)
@@ -68,7 +68,7 @@ func BuyCompanyStocks(c *gin.Context) {
 		utils.Log(c, http.StatusBadRequest)
 		return
 	}
-	var req BuyCompanyStocksRequest
+	var req BuyOrSellCompanyStocksRequest
 	if err := c.BindJSON(&req); err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
 		utils.Log(c, http.StatusBadRequest)
@@ -92,15 +92,16 @@ func BuyCompanyStocks(c *gin.Context) {
 		utils.Log(c, http.StatusBadRequest)
 		return
 	}
-	if userBalance.CurrentBalance < (companyStock.VolumeWeightedAveragePrice * float32(req.Quantity)) {
-
-		c.JSON(http.StatusBadRequest, gin.H{"message": "insufficient funds"})
-		utils.Log(c, http.StatusBadRequest)
-		return
+	if req.BuyOrSell == Buy {
+		if userBalance.CurrentBalance < (companyStock.VolumeWeightedAveragePrice * float32(req.Quantity)) {
+			c.JSON(http.StatusBadRequest, gin.H{"message": "insufficient funds"})
+			utils.Log(c, http.StatusBadRequest)
+			return
+		}
 	}
 	var userTransaction models.UserTransactions
 	userTransaction.ID = uuid.NewUUID()
-	userTransaction.BuyOrSell = Buy
+	userTransaction.BuyOrSell = req.BuyOrSell
 	userTransaction.UserID = user.ID
 	userTransaction.CompanyStockID = companyStock.ID
 	userTransaction.GameNumber = user.CurrentGameNumber
@@ -113,14 +114,25 @@ func BuyCompanyStocks(c *gin.Context) {
 		utils.Log(c, http.StatusInternalServerError)
 		return
 	}
-	updatedBalance := userBalance.CurrentBalance - (float32(req.Quantity) * companyStock.VolumeWeightedAveragePrice)
-
-	err = dbHelper.UpdateUserBalanceOnBuy(user.ID, updatedBalance)
-	if err != nil {
-		c.AbortWithStatus(http.StatusInternalServerError)
-		log.Println(err)
-		utils.Log(c, http.StatusInternalServerError)
-		return
+	var updatedBalance float32
+	if req.BuyOrSell == Buy {
+		updatedBalance = userBalance.CurrentBalance - (float32(req.Quantity) * companyStock.VolumeWeightedAveragePrice)
+		err = dbHelper.UpdateUserBalanceOnUserTransaction(user.ID, updatedBalance)
+		if err != nil {
+			c.AbortWithStatus(http.StatusInternalServerError)
+			log.Println(err)
+			utils.Log(c, http.StatusInternalServerError)
+			return
+		}
+	} else if req.BuyOrSell == Sell {
+		updatedBalance = userBalance.CurrentBalance + (companyStock.VolumeWeightedAveragePrice * float32(req.Quantity))
+		err = dbHelper.UpdateUserBalanceOnUserTransaction(user.ID, updatedBalance)
+		if err != nil {
+			c.AbortWithStatus(http.StatusInternalServerError)
+			log.Println(err)
+			utils.Log(c, http.StatusInternalServerError)
+			return
+		}
 	}
 
 	userAssets, err := dbHelper.GetUserAssetsByTicker(companyStock.Ticker, user.ID)
@@ -141,7 +153,7 @@ func BuyCompanyStocks(c *gin.Context) {
 		}
 		c.JSON(http.StatusOK, userTransaction)
 		utils.Log(c, http.StatusOK)
-		return 
+		return
 
 	} else if err != sql.ErrNoRows && err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
@@ -149,9 +161,13 @@ func BuyCompanyStocks(c *gin.Context) {
 		utils.Log(c, http.StatusInternalServerError)
 		return
 	}
-
-	currentQuantity := userAssets.Quantity + req.Quantity
-	err = dbHelper.UpdateUserAssetsOnBuyByTicker(userAssets.ID, currentQuantity)
+	var currentQuantity int
+	if req.BuyOrSell == Buy {
+		currentQuantity = userAssets.Quantity + req.Quantity
+	} else if req.BuyOrSell == Sell {
+		currentQuantity = userAssets.Quantity - req.Quantity
+	}
+	err = dbHelper.UpdateUserAssetsOnUserTransaction(userAssets.ID, currentQuantity)
 
 	if err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)

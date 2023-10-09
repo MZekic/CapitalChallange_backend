@@ -50,8 +50,10 @@ definitions:
       user_id:
         type: string
     type: object
-  v1companystock.BuyCompanyStocksRequest:
+  v1companystock.BuyOrSellCompanyStocksRequest:
     properties:
+      buy_or_sell:
+        type: string
       company_stock_id:
         type: string
       game_number:
@@ -110,7 +112,7 @@ paths:
       - company_stock
   /company-stocks/{user_id}:
     post:
-      description: buy the selected amount of company stock
+      description: buy or sell the selected amount of company stock
       parameters:
       - description: user_id
         in: path
@@ -122,7 +124,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/v1companystock.BuyCompanyStocksRequest'
+          $ref: '#/definitions/v1companystock.BuyOrSellCompanyStocksRequest'
       responses:
         "200":
           description: OK
@@ -134,7 +136,7 @@ paths:
           description: Not Found
         "500":
           description: Internal Server Error
-      summary: BuyCompanyStock
+      summary: BuyOrSellCompanyStock
       tags:
       - company_stock
 securityDefinitions:

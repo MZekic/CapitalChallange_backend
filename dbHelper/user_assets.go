@@ -3,7 +3,6 @@ package dbHelper
 import (
 	database "capital-challenge-server/database"
 	"capital-challenge-server/models"
-	"log"
 )
 
 func InsertUserAsset(userAsset models.UserAssets) error {
@@ -31,6 +30,17 @@ func GetUserAssetsByTicker(ticker string, userID string) (models.UserAssets, err
 }
 
 func UpdateUserAssetsOnBuyByTicker(id string, quantity int) error {
+	sqlQuery := "UPDATE user_assets SET quantity = $1 WHERE id = $2"
+
+	_, err := database.DB.Exec(sqlQuery, quantity, id)
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func UpdateUserAssetsOnUserTransaction(id string, quantity int) error {
 	sqlQuery := "UPDATE user_assets SET quantity = $1 WHERE id = $2"
 
 	_, err := database.DB.Exec(sqlQuery, quantity, id)

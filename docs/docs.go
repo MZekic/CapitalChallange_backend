@@ -81,11 +81,11 @@ const docTemplate = `{
         },
         "/company-stocks/{user_id}": {
             "post": {
-                "description": "buy the selected amount of company stock",
+                "description": "buy or sell the selected amount of company stock",
                 "tags": [
                     "company_stock"
                 ],
-                "summary": "BuyCompanyStock",
+                "summary": "BuyOrSellCompanyStock",
                 "parameters": [
                     {
                         "type": "string",
@@ -100,7 +100,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1companystock.BuyCompanyStocksRequest"
+                            "$ref": "#/definitions/v1companystock.BuyOrSellCompanyStocksRequest"
                         }
                     }
                 ],
@@ -201,9 +201,12 @@ const docTemplate = `{
                 }
             }
         },
-        "v1companystock.BuyCompanyStocksRequest": {
+        "v1companystock.BuyOrSellCompanyStocksRequest": {
             "type": "object",
             "properties": {
+                "buy_or_sell": {
+                    "type": "string"
+                },
                 "company_stock_id": {
                     "type": "string"
                 },

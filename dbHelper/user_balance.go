@@ -26,3 +26,14 @@ func UpdateUserBalanceOnBuy(userID string, updatedBalance float32) error {
 
 	return nil
 }
+
+func UpdateUserBalanceOnUserTransaction(userID string, updatedBalance float32) error {
+	sqlQuery := "UPDATE user_balance SET current_balance = $1 WHERE user_id= $2"
+	_, err := database.DB.Exec(sqlQuery, updatedBalance, userID)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
