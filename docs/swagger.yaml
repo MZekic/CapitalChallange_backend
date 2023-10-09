@@ -31,6 +31,34 @@ definitions:
       updated_at:
         type: string
     type: object
+  models.UserTransactions:
+    properties:
+      buy_or_sell:
+        type: string
+      company_stock_id:
+        type: string
+      created_at:
+        type: string
+      game_number:
+        type: integer
+      id:
+        type: string
+      quantity:
+        type: integer
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  v1companystock.BuyCompanyStocksRequest:
+    properties:
+      company_stock_id:
+        type: string
+      game_number:
+        type: integer
+      quantity:
+        type: integer
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -65,7 +93,7 @@ paths:
       summary: Get Company info
       tags:
       - companies
-  /company-stock:
+  /company-stocks:
     get:
       description: get the daily information about company stocks
       responses:
@@ -78,6 +106,35 @@ paths:
         "500":
           description: Internal Server Error
       summary: Get Daily Company Stock
+      tags:
+      - company_stock
+  /company-stocks/{user_id}:
+    post:
+      description: buy the selected amount of company stock
+      parameters:
+      - description: user_id
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1companystock.BuyCompanyStocksRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserTransactions'
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: BuyCompanyStock
       tags:
       - company_stock
 securityDefinitions:

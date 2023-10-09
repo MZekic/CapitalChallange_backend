@@ -3,7 +3,6 @@ package polygon
 import (
 	"capital-challenge-server/models"
 	"context"
-	"log"
 	"os"
 	"time"
 
@@ -58,7 +57,6 @@ func GetDailyCompanyStockInfo() ([]models.CompanyStock, error) {
 	if err != nil {
 		return res, err
 	}
-	log.Println(resP.ResultsCount)
 	if resP.ResultsCount > 0 {
 		for _, data := range resP.Results {
 			var companyStock models.CompanyStock
@@ -76,7 +74,6 @@ func GetDailyCompanyStockInfo() ([]models.CompanyStock, error) {
 			res = append(res, companyStock)
 		}
 	}
-	log.Println("2")
 
 	return res, nil
 }

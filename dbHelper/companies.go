@@ -3,7 +3,6 @@ package dbHelper
 import (
 	database "capital-challenge-server/database"
 	"capital-challenge-server/models"
-	"log"
 )
 
 func GetCompanyInfoByTicker(ticker string) (*models.Companies, error) {
@@ -22,7 +21,6 @@ func InsertCompany(company models.Companies) error {
 	(:id, :name, :ticker, :market, :primary_exchange, :type, :currency_name, :locale, :homepage_url, :description, :total_employees, :logo_url)`
 	_, err := database.DB.NamedExec(sqlQuery, company)
 	if err != nil {
-		log.Println(err)
 		return err
 	}
 	return nil

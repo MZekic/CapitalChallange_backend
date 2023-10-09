@@ -56,7 +56,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/company-stock": {
+        "/company-stocks": {
             "get": {
                 "description": "get the daily information about company stocks",
                 "tags": [
@@ -66,6 +66,50 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/company-stocks/{user_id}": {
+            "post": {
+                "description": "buy the selected amount of company stock",
+                "tags": [
+                    "company_stock"
+                ],
+                "summary": "BuyCompanyStock",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1companystock.BuyCompanyStocksRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.UserTransactions"
+                        }
                     },
                     "400": {
                         "description": "Bad Request"
@@ -125,6 +169,49 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "string"
+                }
+            }
+        },
+        "models.UserTransactions": {
+            "type": "object",
+            "properties": {
+                "buy_or_sell": {
+                    "type": "string"
+                },
+                "company_stock_id": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "game_number": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1companystock.BuyCompanyStocksRequest": {
+            "type": "object",
+            "properties": {
+                "company_stock_id": {
+                    "type": "string"
+                },
+                "game_number": {
+                    "type": "integer"
+                },
+                "quantity": {
+                    "type": "integer"
                 }
             }
         }

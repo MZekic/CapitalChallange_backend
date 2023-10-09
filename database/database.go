@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/golang-migrate/migrate/v4"
@@ -32,7 +33,9 @@ func DBConnection() error {
 	if err != nil {
 		return err
 	}
-	m.Up()
+	if err := m.Up(); err != nil {
+		log.Printf("Error migrating Up: %v", err)
+	}
 
 	DB = db
 
