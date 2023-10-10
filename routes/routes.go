@@ -1,10 +1,10 @@
 package routes
 
 import (
+	_ "capital-challenge-server/docs"
 	v1CompaniesRoutes "capital-challenge-server/routes/v1/companiesRoutes"
 	v1CompanyStocksRoutes "capital-challenge-server/routes/v1/company_stock"
-
-	_ "capital-challenge-server/docs"
+	v1UsersRoutes "capital-challenge-server/routes/v1/userRoutes"
 
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
@@ -27,4 +27,6 @@ func getRoutes() {
 	v1CompanyStocks := router.Group("/v1/company-stocks")
 	v1CompanyStocksRoutes.AddCompanyStocksRoutes(v1CompanyStocks)
 
+	v1Users := router.Group("/v1/users")
+	v1UsersRoutes.AddUserRoutes(v1Users)
 }

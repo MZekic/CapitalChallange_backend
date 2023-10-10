@@ -10,7 +10,7 @@ func BulkInsertCompanyStock(companyStocks []models.CompanyStock) error {
 		//todo test this shit
 		companyStocksLen := len(companyStocks)
 		companyStocks1 := companyStocks[:companyStocksLen/2]
-		companyStocks2 := companyStocks[(companyStocksLen/2)+1:]
+		companyStocks2 := companyStocks[(companyStocksLen/2):]
 
 		sqlQuery := `INSERT INTO company_stock (id, ticker, close_price, highest_price, lowest_price, number_of_transactions, open_price, otc, trading_volume, volume_weighted_average_price) VALUES 
 	(:id, :ticker, :close_price, :highest_price, :lowest_price, :number_of_transactions, :open_price, :otc, :trading_volume, :volume_weighted_average_price)`
