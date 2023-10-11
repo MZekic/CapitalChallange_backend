@@ -122,6 +122,80 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/users/": {
+            "post": {
+                "description": "Login user",
+                "tags": [
+                    "users"
+                ],
+                "summary": "Login user",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1Users.UserLoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/users/register": {
+            "post": {
+                "description": "Register user",
+                "tags": [
+                    "users"
+                ],
+                "summary": "Register user",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1Users.UserRegistrationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1Users.UserRegistrationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -197,6 +271,51 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1Users.UserLoginRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1Users.UserRegistrationRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1Users.UserRegistrationResponse": {
+            "type": "object",
+            "properties": {
+                "current_balance": {
+                    "type": "number"
+                },
+                "current_game_number": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "starting_balance": {
+                    "type": "number"
+                },
+                "username": {
                     "type": "string"
                 }
             }

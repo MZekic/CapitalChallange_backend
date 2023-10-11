@@ -6,14 +6,17 @@ import (
 	"capital-challenge-server/utils"
 	"log"
 	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/u2takey/go-utils/uuid"
 )
+
 const (
 	NEW_USER_STARTING_BALANCE = 1000
-	NEW_USER_GAME_NUMBER = 1
-
+	NEW_USER_GAME_NUMBER      = 1
+	NEW_USER_CURRENT_BALANCE = 1000
 )
+
 // Register user godoc
 // @Summary      Register user
 // @Description  Register user
@@ -34,7 +37,6 @@ func Registration(c *gin.Context) {
 	}
 
 	err := validateUserRegistrationRequest(registrationDetails)
-
 	if err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
 		utils.Log(c, http.StatusBadRequest)
@@ -42,23 +44,15 @@ func Registration(c *gin.Context) {
 		return
 	}
 
-	emailExists, usernameExists, err := dbHelper.CheckIfUsernameOrEmailExists(registrationDetails.Email, registrationDetails.Username)
-
+	userExistsRef, err := dbHelper.CheckIfUsernameOrEmailExists(registrationDetails.Email, registrationDetails.Username)
 	if err != nil {
-		c.AbortWithStatus(http.StatusInternalServerError)
-		utils.Log(c, http.StatusInternalServerError)
+		c.AbortWithStatus(http.StatusBadRequest)
+		utils.Log(c, http.StatusBadRequest)
 		return
 	}
-	if usernameExists > 0 && emailExists > 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "username and email already exists"})
-		utils.Log(c, http.StatusBadRequest)
-		return
-	} else if emailExists > 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "email already exists"})
-		utils.Log(c, http.StatusBadRequest)
-		return
-	} else if usernameExists > 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "username already exists"})
+
+	if userExistsRef == true {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "username or email already exists"})
 		utils.Log(c, http.StatusBadRequest)
 		return
 	}
@@ -72,7 +66,7 @@ func Registration(c *gin.Context) {
 
 	var user models.Users
 	user.ID = uuid.NewUUID()
-	user.CurrentGameNumber = 1
+	user.CurrentGameNumber = NEW_USER_GAME_NUMBER
 	user.Email = registrationDetails.Email
 	user.Username = registrationDetails.Username
 	user.Password = hashedPassword
@@ -89,7 +83,7 @@ func Registration(c *gin.Context) {
 	userBalance.ID = uuid.NewUUID()
 	userBalance.StartingBalance = NEW_USER_STARTING_BALANCE
 	userBalance.GameNumber = NEW_USER_GAME_NUMBER
-	userBalance.CurrentBalance = NEW_USER_STARTING_BALANCE
+	userBalance.CurrentBalance = NEW_USER_CURRENT_BALANCE
 	userBalance.UserID = user.ID
 
 	err = dbHelper.CreateUserBalance(userBalance)
@@ -155,4 +149,3 @@ func Login(c *gin.Context) {
 
 	c.JSON(http.StatusOK, token)
 }
-
