@@ -3,6 +3,7 @@ package dbHelper
 import (
 	database "capital-challenge-server/database"
 	"capital-challenge-server/models"
+	"database/sql"
 )
 
 func GetUserByID(userID string) (models.Users, error) {
@@ -26,20 +27,17 @@ func CreateUserRecord(user models.Users) error {
 	return nil
 }
 
-func CheckIfUsernameOrEmailExists(email string, username string) (int, int, error) {
-	sqlQueryForEmail := "SELECT COUNT(*) from users WHERE email = $1"
-	var emailExists int
-	err := database.DB.Get(&emailExists, sqlQueryForEmail, email)
-	if err != nil {
-		return 0, 0, err
+func CheckIfUsernameOrEmailExists(email string, username string) (bool, error) {
+	sqlQuery := "SELECT * from users WHERE email = $1 OR username = $2"
+	var ifExists models.Users
+	err := database.DB.Get(&ifExists, sqlQuery, email, username)
+	if err != nil && err != sql.ErrNoRows {
+		return false, err
+	} else if err == sql.ErrNoRows {
+		return false, nil
 	}
-	var usernameExists int
-	sqlQueryForUsername := "SELECT COUNT(*) from users WHERE username = $1"
-	err = database.DB.Get(&usernameExists, sqlQueryForUsername, username)
-	if err != nil {
-		return 0, 0, err
-	}
-	return emailExists, usernameExists, err
+
+	return true, nil
 }
 
 func GetUserByEmail(email string) (models.Users, error) {

@@ -23,7 +23,6 @@ func validateUserRegistrationRequest(req UserRegistrationRequest) error {
 	}
 }
 
-//sta je dragi
 func validateUserLoginRequest(req UserLoginRequest) error {
 	var errors []string
 	if len(req.Email) <= 0 {

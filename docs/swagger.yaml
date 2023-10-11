@@ -50,6 +50,35 @@ definitions:
       user_id:
         type: string
     type: object
+  v1Users.UserLoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  v1Users.UserRegistrationRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  v1Users.UserRegistrationResponse:
+    properties:
+      current_balance:
+        type: number
+      current_game_number:
+        type: integer
+      email:
+        type: string
+      starting_balance:
+        type: number
+      username:
+        type: string
+    type: object
   v1companystock.BuyOrSellCompanyStocksRequest:
     properties:
       buy_or_sell:
@@ -139,6 +168,54 @@ paths:
       summary: BuyOrSellCompanyStock
       tags:
       - company_stock
+  /users/:
+    post:
+      description: Login user
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1Users.UserLoginRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Login user
+      tags:
+      - users
+  /users/register:
+    post:
+      description: Register user
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1Users.UserRegistrationRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1Users.UserRegistrationResponse'
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Register user
+      tags:
+      - users
 securityDefinitions:
   BasicAuth:
     type: basic
