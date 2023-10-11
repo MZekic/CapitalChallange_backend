@@ -50,7 +50,7 @@
                 }
             }
         },
-        "/company-stock": {
+        "/company-stocks": {
             "get": {
                 "description": "get the daily information about company stocks",
                 "tags": [
@@ -60,6 +60,124 @@
                 "responses": {
                     "200": {
                         "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/company-stocks/{user_id}": {
+            "post": {
+                "description": "buy or sell the selected amount of company stock",
+                "tags": [
+                    "company_stock"
+                ],
+                "summary": "BuyOrSellCompanyStock",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1companystock.BuyOrSellCompanyStocksRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.UserTransactions"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/users/": {
+            "post": {
+                "description": "Login user",
+                "tags": [
+                    "users"
+                ],
+                "summary": "Login user",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1Users.UserLoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/users/register": {
+            "post": {
+                "description": "Register user",
+                "tags": [
+                    "users"
+                ],
+                "summary": "Register user",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1Users.UserRegistrationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1Users.UserRegistrationResponse"
+                        }
                     },
                     "400": {
                         "description": "Bad Request"
@@ -119,6 +237,97 @@
                 },
                 "updated_at": {
                     "type": "string"
+                }
+            }
+        },
+        "models.UserTransactions": {
+            "type": "object",
+            "properties": {
+                "buy_or_sell": {
+                    "type": "string"
+                },
+                "company_stock_id": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "game_number": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1Users.UserLoginRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1Users.UserRegistrationRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1Users.UserRegistrationResponse": {
+            "type": "object",
+            "properties": {
+                "current_balance": {
+                    "type": "number"
+                },
+                "current_game_number": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "starting_balance": {
+                    "type": "number"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1companystock.BuyOrSellCompanyStocksRequest": {
+            "type": "object",
+            "properties": {
+                "buy_or_sell": {
+                    "type": "string"
+                },
+                "company_stock_id": {
+                    "type": "string"
+                },
+                "game_number": {
+                    "type": "integer"
+                },
+                "quantity": {
+                    "type": "integer"
                 }
             }
         }

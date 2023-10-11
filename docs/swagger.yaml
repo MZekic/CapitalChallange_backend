@@ -31,6 +31,65 @@ definitions:
       updated_at:
         type: string
     type: object
+  models.UserTransactions:
+    properties:
+      buy_or_sell:
+        type: string
+      company_stock_id:
+        type: string
+      created_at:
+        type: string
+      game_number:
+        type: integer
+      id:
+        type: string
+      quantity:
+        type: integer
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  v1Users.UserLoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  v1Users.UserRegistrationRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  v1Users.UserRegistrationResponse:
+    properties:
+      current_balance:
+        type: number
+      current_game_number:
+        type: integer
+      email:
+        type: string
+      starting_balance:
+        type: number
+      username:
+        type: string
+    type: object
+  v1companystock.BuyOrSellCompanyStocksRequest:
+    properties:
+      buy_or_sell:
+        type: string
+      company_stock_id:
+        type: string
+      game_number:
+        type: integer
+      quantity:
+        type: integer
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -65,7 +124,7 @@ paths:
       summary: Get Company info
       tags:
       - companies
-  /company-stock:
+  /company-stocks:
     get:
       description: get the daily information about company stocks
       responses:
@@ -80,6 +139,83 @@ paths:
       summary: Get Daily Company Stock
       tags:
       - company_stock
+  /company-stocks/{user_id}:
+    post:
+      description: buy or sell the selected amount of company stock
+      parameters:
+      - description: user_id
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1companystock.BuyOrSellCompanyStocksRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserTransactions'
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: BuyOrSellCompanyStock
+      tags:
+      - company_stock
+  /users/:
+    post:
+      description: Login user
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1Users.UserLoginRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Login user
+      tags:
+      - users
+  /users/register:
+    post:
+      description: Register user
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1Users.UserRegistrationRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1Users.UserRegistrationResponse'
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Register user
+      tags:
+      - users
 securityDefinitions:
   BasicAuth:
     type: basic

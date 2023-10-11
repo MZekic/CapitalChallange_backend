@@ -33,9 +33,5 @@ func main() {
 
 	polygon.StartPolygonClient()
 
-	//r := gin.Default()
-	//r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
-	//r.GET("/v1/companies/:ticker", v1Companies.GetCompanyInfo)
-	//r.Run()
 	routes.Run()
 }

@@ -35,9 +35,9 @@ func GetCompanyInfo(c *gin.Context) {
 			utils.Log(c, http.StatusInternalServerError)
 			return
 		}
+		company.ID = uuid.NewUUID()
 
 		c.JSON(http.StatusOK, company)
-		company.ID = uuid.NewUUID()
 		go dbhelper.InsertCompany(company)
 		utils.Log(c, http.StatusOK)
 		return
