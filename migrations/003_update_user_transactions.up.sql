@@ -1,1 +1,0 @@
-ALTER TABLE user_transactions ALTER COLUMN buy_or_sell TYPE text;

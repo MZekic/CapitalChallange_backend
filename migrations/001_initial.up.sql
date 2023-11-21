@@ -3,7 +3,6 @@ CREATE TABLE IF NOT EXISTS users(
    username text UNIQUE NOT NULL,
    password text NOT NULL,
    email text UNIQUE NOT NULL,
-   current_game_number integer,
    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -13,7 +12,6 @@ CREATE TABLE IF NOT EXISTS user_balance(
    user_id text NOT NULL,
    starting_balance numeric(20,10),
    current_balance numeric(20,10),
-   game_number integer,
    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
    CONSTRAINT fk_user_balance
@@ -57,31 +55,35 @@ CREATE TABLE IF NOT EXISTS company_stock(
 CREATE TABLE IF NOT EXISTS user_assets(
    id text PRIMARY KEY,
    user_id text NOT NULL,
+   company_stock_id text NOT NULL,
    ticker text NOT NULL,
    quantity integer,
-   game_number integer,
+   price_per_unit numeric(20,10),
    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
    CONSTRAINT fk_user_assets_user
     FOREIGN KEY (user_id)
         REFERENCES users(id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+   CONSTRAINT fk_user_assets_company_stock
+    FOREIGN KEY (company_stock_id)
+        REFERENCES company_stock(id)
 );
 
 CREATE TABLE IF NOT EXISTS user_transactions(
    id text PRIMARY KEY,
    user_id text NOT NULL,
    company_stock_id text NOT NULL,
-   buy_or_sell boolean,
+   buy_price numeric(20,10),
+   sell_price numeric(20,10),
    quantity integer,
-   game_number integer,
    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
    CONSTRAINT fk_user_transactions_user
     FOREIGN KEY (user_id)
         REFERENCES users(id)
         ON DELETE CASCADE,
-    CONSTRAINT fk_user_assets_company_stock
+    CONSTRAINT fk_user_transactions_company_stock
     FOREIGN KEY (company_stock_id)
         REFERENCES company_stock(id)
         ON DELETE CASCADE

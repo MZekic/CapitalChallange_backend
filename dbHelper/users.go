@@ -19,7 +19,7 @@ func GetUserByID(userID string) (models.Users, error) {
 }
 
 func CreateUserRecord(user models.Users) error {
-	sqlQuery := "INSERT INTO users(id, username, email, password, current_game_number ) VALUES (:id, :username, :email, :password, :current_game_number)"
+	sqlQuery := "INSERT INTO users(id, username, email, password) VALUES (:id, :username, :email, :password)"
 	_, err := database.DB.NamedExec(sqlQuery, user)
 	if err != nil {
 		return err

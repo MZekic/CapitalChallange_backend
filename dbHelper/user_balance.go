@@ -39,7 +39,7 @@ func UpdateUserBalanceOnUserTransaction(userID string, updatedBalance float32) e
 }
 
 func CreateUserBalance(userBalance models.UserBalance) error {
-	sqlQuery := "INSERT INTO user_balance(id, user_id, starting_balance, current_balance, game_number ) VALUES (:id, :user_id, :starting_balance, :current_balance, :game_number)"
+	sqlQuery := "INSERT INTO user_balance(id, user_id, starting_balance, current_balance) VALUES (:id, :user_id, :starting_balance, :current_balance)"
 	_, err := database.DB.NamedExec(sqlQuery, userBalance)
 	if err != nil {
 		return err

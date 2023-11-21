@@ -1,4 +1,5 @@
 package v1Users
+
 import (
 	jwt "github.com/dgrijalva/jwt-go"
 )
@@ -15,22 +16,20 @@ type JwtClaim struct {
 	jwt.StandardClaims
 }
 
-
 type UserRegistrationRequest struct {
 	Username string `json:"username"`
-	Email string `json:"email"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
 type UserRegistrationResponse struct {
-	Username string `json:"username"`
-	Email string `json:"email"`
-	CurrentBalance float32 `json:"current_balance"` 
-	StartingBalance float32 `json:"starting_balance"` 
-	CurrentGameNumber int `json:"current_game_number"` 
+	Username        string  `json:"username"`
+	Email           string  `json:"email"`
+	CurrentBalance  float32 `json:"current_balance"`
+	StartingBalance float32 `json:"starting_balance"`
 }
 
 type UserLoginRequest struct {
-	Email string `json:"email"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
 }

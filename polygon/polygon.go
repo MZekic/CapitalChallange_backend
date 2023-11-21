@@ -70,6 +70,7 @@ func GetDailyCompanyStockInfo() ([]models.CompanyStock, error) {
 			companyStock.Ticker = data.Ticker
 			companyStock.TradingVolume = int(data.Volume)
 			companyStock.VolumeWeightedAveragePrice = float32(data.VWAP)
+			companyStock.Date = &lastDay
 
 			res = append(res, companyStock)
 		}

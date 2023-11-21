@@ -4,6 +4,7 @@ import (
 	_ "capital-challenge-server/docs"
 	v1CompaniesRoutes "capital-challenge-server/routes/v1/companiesRoutes"
 	v1CompanyStocksRoutes "capital-challenge-server/routes/v1/company_stock"
+	v1UserAssetsRoutes "capital-challenge-server/routes/v1/userAssets"
 	v1UsersRoutes "capital-challenge-server/routes/v1/userRoutes"
 
 	"github.com/gin-gonic/gin"
@@ -29,4 +30,7 @@ func getRoutes() {
 
 	v1Users := router.Group("/v1/users")
 	v1UsersRoutes.AddUserRoutes(v1Users)
+
+	v1UserAssets := router.Group("/v1/user-assets")
+	v1UserAssetsRoutes.AddUserAssetsRoutes(v1UserAssets)
 }

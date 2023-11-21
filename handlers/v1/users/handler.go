@@ -4,7 +4,6 @@ import (
 	"capital-challenge-server/dbHelper"
 	"capital-challenge-server/models"
 	"capital-challenge-server/utils"
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -13,8 +12,7 @@ import (
 
 const (
 	NEW_USER_STARTING_BALANCE = 1000
-	NEW_USER_GAME_NUMBER      = 1
-	NEW_USER_CURRENT_BALANCE = 1000
+	NEW_USER_CURRENT_BALANCE  = 1000
 )
 
 // Register user godoc
@@ -30,43 +28,35 @@ const (
 func Registration(c *gin.Context) {
 	var registrationDetails UserRegistrationRequest
 	if err := c.BindJSON(&registrationDetails); err != nil {
-		c.AbortWithStatus(http.StatusBadRequest)
-		utils.Log(c, http.StatusBadRequest)
-		log.Println(err)
+		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
 	err := validateUserRegistrationRequest(registrationDetails)
 	if err != nil {
-		c.AbortWithStatus(http.StatusBadRequest)
-		utils.Log(c, http.StatusBadRequest)
-		log.Println(err)
+		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
 	userExistsRef, err := dbHelper.CheckIfUsernameOrEmailExists(registrationDetails.Email, registrationDetails.Username)
 	if err != nil {
-		c.AbortWithStatus(http.StatusBadRequest)
-		utils.Log(c, http.StatusBadRequest)
+		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
 	if userExistsRef == true {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "username or email already exists"})
-		utils.Log(c, http.StatusBadRequest)
 		return
 	}
 
 	hashedPassword, err := utils.HashPassword(registrationDetails.Password)
 	if err != nil {
-		c.AbortWithStatus(http.StatusInternalServerError)
-		utils.Log(c, http.StatusInternalServerError)
+		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
 	var user models.Users
 	user.ID = uuid.NewUUID()
-	user.CurrentGameNumber = NEW_USER_GAME_NUMBER
 	user.Email = registrationDetails.Email
 	user.Username = registrationDetails.Username
 	user.Password = hashedPassword
@@ -74,28 +64,24 @@ func Registration(c *gin.Context) {
 	err = dbHelper.CreateUserRecord(user)
 
 	if err != nil {
-		c.AbortWithStatus(http.StatusInternalServerError)
-		utils.Log(c, http.StatusInternalServerError)
+		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
 	var userBalance models.UserBalance
 	userBalance.ID = uuid.NewUUID()
 	userBalance.StartingBalance = NEW_USER_STARTING_BALANCE
-	userBalance.GameNumber = NEW_USER_GAME_NUMBER
 	userBalance.CurrentBalance = NEW_USER_CURRENT_BALANCE
 	userBalance.UserID = user.ID
 
 	err = dbHelper.CreateUserBalance(userBalance)
 	if err != nil {
-		c.AbortWithStatus(http.StatusInternalServerError)
-		utils.Log(c, http.StatusInternalServerError)
+		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
 	var response UserRegistrationResponse
 	response.CurrentBalance = userBalance.CurrentBalance
-	response.CurrentGameNumber = userBalance.GameNumber
 	response.Email = user.Email
 	response.StartingBalance = userBalance.StartingBalance
 	response.Username = user.Username

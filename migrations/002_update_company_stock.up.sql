@@ -1,0 +1,1 @@
+ALTER TABLE company_stock ADD date TIMESTAMPTZ;

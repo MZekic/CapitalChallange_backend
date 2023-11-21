@@ -13,6 +13,7 @@ type CompanyStock struct {
 	OTC                        bool       `json:"otc" db:"otc"`
 	TradingVolume              int        `json:"trading_volume" db:"trading_volume"`
 	VolumeWeightedAveragePrice float32    `json:"volume_weighted_average_price" db:"volume_weighted_average_price"`
+	Date                       *time.Time `json:"date" db:"date"`
 	CreatedAt                  *time.Time `json:"created_at,omitempty" db:"created_at"`
 	UpdatedAt                  *time.Time `json:"updated_at,omitempty" db:"updated_at"`
 }

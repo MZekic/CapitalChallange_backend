@@ -5,15 +5,15 @@ import (
 	"capital-challenge-server/models"
 )
 
-func GetCompanyInfoByTicker(ticker string) (*models.Companies, error) {
+func GetCompanyInfoByTicker(ticker string) (models.Companies, error) {
 	var result models.Companies
 	sqlQuery := "SELECT * FROM companies WHERE ticker = $1"
 	err := database.DB.Get(&result, sqlQuery, ticker)
 	if err != nil {
-		return &result, err
+		return result, err
 	}
 
-	return &result, nil
+	return result, nil
 }
 
 func InsertCompany(company models.Companies) error {
