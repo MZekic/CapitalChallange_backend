@@ -37,8 +37,7 @@ func BuyCompanyStocks(buyRequest models.CompanyStock) error {
 	return nil
 }
 
-func GetCompanyStockInfoByID(companyStockID string) (models.CompanyStock, error) {
-
+func GetCompanyStockByID(companyStockID string) (models.CompanyStock, error) {
 	var companyStock models.CompanyStock
 
 	sqlQuery := "SELECT * FROM company_stock WHERE id = $1"
@@ -49,8 +48,7 @@ func GetCompanyStockInfoByID(companyStockID string) (models.CompanyStock, error)
 
 	return companyStock, nil
 }
-
-func GetCompanyStockLatestInfoByTicker(ticker string) (models.CompanyStock, error) {
+func GetCurrentCompanyStockByTicker(ticker string) (models.CompanyStock, error) {
 	var companyStock models.CompanyStock
 
 	sqlQuery := "SELECT * FROM company_stock WHERE ticker = $1 ORDER BY created_at DESC LIMIT 1"

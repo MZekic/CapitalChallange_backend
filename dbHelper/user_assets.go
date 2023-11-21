@@ -65,17 +65,6 @@ func UpdateUserAssetsOnBuyByTicker(id string, quantity int) error {
 	return nil
 }
 
-func UpdateUserAssetsOnUserTransaction(id string, quantity int) error {
-	sqlQuery := "UPDATE user_assets SET quantity = $1 WHERE id = $2"
-
-	_, err := database.DB.Exec(sqlQuery, quantity, id)
-
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 func UpdateUserAssetsOnBuy(id string, quantity int) error {
 	sqlQuery := "UPDATE user_assets SET quantity = $1 WHERE id = $2"
 

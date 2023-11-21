@@ -27,9 +27,9 @@ func GetCompanyInfo(c *gin.Context) {
 	req.Ticker = c.Param("ticker")
 
 	var res GetCompanyInfoResponse
-	companyStock, err := dbhelper.GetCompanyStockLatestInfoByTicker(req.Ticker)
+	companyStock, err := dbhelper.GetCurrentCompanyStockByTicker(req.Ticker)
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	res.CompanyStock = companyStock
@@ -38,7 +38,7 @@ func GetCompanyInfo(c *gin.Context) {
 	if err == sql.ErrNoRows {
 		company, err := polygon.GetCompanyInfoByTicker(req.Ticker)
 		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 		company.ID = uuid.NewUUID()
@@ -48,7 +48,7 @@ func GetCompanyInfo(c *gin.Context) {
 		go dbhelper.InsertCompany(company)
 		return
 	} else if err != sql.ErrNoRows && err != nil {
-		c.AbortWithStatus(http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 

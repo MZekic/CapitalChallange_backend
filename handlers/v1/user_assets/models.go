@@ -14,7 +14,7 @@ type UserAssetsValues struct {
 	ValuePerUnit float32 `json:"value_per_unit"`
 }
 
-type UserAssetsProfitsPerStock struct {
+type UserAssetsStocksInfo struct {
 	CompanyStock      models.CompanyStock `json:"company_stock"`
 	Quantity          int                 `json:"quantity"`
 	BuyPrice          float32             `json:"buy_price"`
@@ -27,7 +27,7 @@ type UserAssetsProfitsPerStock struct {
 }
 
 type UserAssetsProfits struct {
-	UserAssets        []UserAssetsProfitsPerStock `json:"company_stock"`
+	UserAssets        []UserAssetsStocksInfo `json:"company_stock"`
 	TotalSpent        float32                     `json:"total_spent"`
 	TotalCurrentValue float32                     `json:"total_current_value"`
 	TotalProfitMargin string                      `json:"total_profit_margin"`

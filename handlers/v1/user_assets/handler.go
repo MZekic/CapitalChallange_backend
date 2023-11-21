@@ -2,9 +2,7 @@ package v1userassets
 
 import (
 	"capital-challenge-server/dbHelper"
-	"capital-challenge-server/utils"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -24,17 +22,13 @@ func GetUserAssets(c *gin.Context) {
 	userID := c.Param("user_id")
 	user, err := dbHelper.GetUserByID(userID)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
-		log.Println(err)
-		utils.Log(c, http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	userAssets, err := dbHelper.GetUserAssets(user.ID)
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		log.Println(err)
-		utils.Log(c, http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	if userAssets == nil {
@@ -58,22 +52,22 @@ func GetUserAssetsValue(c *gin.Context) {
 	userID := c.Param("user_id")
 	user, err := dbHelper.GetUserByID(userID)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	userAssets, err := dbHelper.GetUserAssetsQuantityByTicker(user.ID)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	var values []UserAssetsValues
 	for _, data := range userAssets {
 		var unitValue UserAssetsValues
-		asset, err := dbHelper.GetCompanyStockLatestInfoByTicker(data.Ticker)
+		asset, err := dbHelper.GetCurrentCompanyStockByTicker(data.Ticker)
 		if err != nil {
-			c.AbortWithError(http.StatusBadRequest, err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 		unitValue.Ticker = data.Ticker
@@ -107,46 +101,45 @@ func GetUserProfits(c *gin.Context) {
 	userID := c.Param("user_id")
 	user, err := dbHelper.GetUserByID(userID)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+
 		return
 	}
 
 	userAssets, err := dbHelper.GetUserAssets(user.ID)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	var userProfits UserAssetsProfits
 
 	for _, data := range userAssets {
-		var userAssetsValues UserAssetsProfitsPerStock
-		values, err := dbHelper.GetCompanyStockInfoByID(data.CompanyStockID)
+		var userAssetsValues UserAssetsStocksInfo
+		companyStock, err := dbHelper.GetCompanyStockByID(data.CompanyStockID)
 		if err != nil {
-			c.AbortWithError(http.StatusBadRequest, err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		currentStockValue, err := dbHelper.GetCompanyStockLatestInfoByTicker(data.Ticker)
+		currentStockValue, err := dbHelper.GetCurrentCompanyStockByTicker(data.Ticker)
 		if err != nil {
-			c.AbortWithError(http.StatusBadRequest, err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		userAssetsValues.CompanyStock = values
+		userAssetsValues.CompanyStock = companyStock
 		userAssetsValues.Quantity = data.Quantity
 		userAssetsValues.BuyPrice = data.PricePerUnit
 		userAssetsValues.CurrentPrice = currentStockValue.VolumeWeightedAveragePrice
 		userAssetsValues.TotalBuyPrice = float32(data.Quantity) * data.PricePerUnit
 		userAssetsValues.TotalCurrentPrice = float32(data.Quantity) * currentStockValue.VolumeWeightedAveragePrice
 		userAssetsValues.ProfitPerUnit = currentStockValue.VolumeWeightedAveragePrice - data.PricePerUnit
-		userAssetsValues.TotalProfit = float32(data.Quantity) * (currentStockValue.VolumeWeightedAveragePrice - data.PricePerUnit)
-		userAssetsValues.ProfitMargin = fmt.Sprintf("%f%%", (userAssetsValues.ProfitPerUnit / data.PricePerUnit * 100))
-		//
+		userAssetsValues.TotalProfit = float32(data.Quantity) * userAssetsValues.ProfitPerUnit
+		userAssetsValues.ProfitMargin = calculateProfitMargin(data.PricePerUnit, currentStockValue.VolumeWeightedAveragePrice)
 		userProfits.UserAssets = append(userProfits.UserAssets, userAssetsValues)
 		userProfits.TotalSpent += userAssetsValues.TotalBuyPrice
 		userProfits.TotalCurrentValue += userAssetsValues.TotalCurrentPrice
 	}
-
-	userProfits.TotalProfitMargin = fmt.Sprintf("%f%%", ((userProfits.TotalCurrentValue - userProfits.TotalSpent) / userProfits.TotalSpent * 100))
+	userProfits.TotalProfitMargin = calculateProfitMargin(userProfits.TotalSpent,userProfits.TotalCurrentValue)
 	userProfits.TotalProfit = userProfits.TotalCurrentValue - userProfits.TotalSpent
 
 	if userProfits.UserAssets == nil {
@@ -154,4 +147,8 @@ func GetUserProfits(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, userProfits)
 	}
+}
+
+func calculateProfitMargin(originalPrice float32, currentPrice float32)(string){
+	return fmt.Sprintf("%f%%", ((currentPrice - originalPrice) / originalPrice * 100))
 }

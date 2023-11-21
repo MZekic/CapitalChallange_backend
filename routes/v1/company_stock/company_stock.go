@@ -8,7 +8,6 @@ import (
 
 func AddCompanyStocksRoutes(rg *gin.RouterGroup) {
 	rg.GET("/", v1CompanyStock.GetDailyCompanyStock)
-	rg.POST("/:user_id", v1CompanyStock.BuyOrSellCompanyStocks)
 	rg.POST("/buy/:user_id", v1CompanyStock.BuyCompanyStock)
 	rg.POST("/sell/:user_id", v1CompanyStock.SellCompanyStock)
 }
