@@ -59,15 +59,3 @@ func GetCurrentCompanyStockByTicker(ticker string) (models.CompanyStock, error) 
 
 	return companyStock, nil
 }
-
-func GetCompanyStockLatestInfoByCompanyStockID(companyStockID string) (models.CompanyStock, error) {
-	var companyStock models.CompanyStock
-
-	sqlQuery := "SELECT * FROM company_stock WHERE id = $1 AND created_at >= NOW() - INTERVAL '24 HOURS'"
-	err := database.DB.Get(&companyStock, sqlQuery, companyStockID)
-	if err != nil {
-		return companyStock, err
-	}
-
-	return companyStock, nil
-}

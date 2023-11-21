@@ -16,17 +16,6 @@ func GetUserBalanceByUserID(userID string) (models.UserBalance, error) {
 	return userBalance, nil
 }
 
-func UpdateUserBalanceOnBuy(userID string, updatedBalance float32) error {
-	sqlQuery := "UPDATE user_balance SET current_balance = $1 WHERE user_id= $2"
-	_, err := database.DB.Exec(sqlQuery, updatedBalance, userID)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func UpdateUserBalance(userID string, updatedBalance float32) error {
 	sqlQuery := "UPDATE user_balance SET current_balance = $1 WHERE user_id= $2"
 	_, err := database.DB.Exec(sqlQuery, updatedBalance, userID)

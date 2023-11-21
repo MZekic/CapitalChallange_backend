@@ -54,50 +54,6 @@ func UpdateUserAssets(id string, quantity int) error {
 	return nil
 }
 
-func UpdateUserAssetsOnBuyByTicker(id string, quantity int) error {
-	sqlQuery := "UPDATE user_assets SET quantity = $1 WHERE id = $2"
-
-	_, err := database.DB.Exec(sqlQuery, quantity, id)
-
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func UpdateUserAssetsOnBuy(id string, quantity int) error {
-	sqlQuery := "UPDATE user_assets SET quantity = $1 WHERE id = $2"
-
-	_, err := database.DB.Exec(sqlQuery, quantity, id)
-
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func UpdateUserAssetsOnSell(id string, quantity int) error {
-	sqlQuery := "UPDATE user_assets SET quantity = $1 WHERE id = $2"
-
-	_, err := database.DB.Exec(sqlQuery, quantity, id)
-
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func DeleteUserAssetsOnSell(id string) error {
-	sqlQuery := "DELETE FROM user_assets WHERE id = $1"
-
-	_, err := database.DB.Exec(sqlQuery, id)
-
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 func DeleteUserAssets(id string) error {
 	sqlQuery := "DELETE FROM user_assets WHERE id = $1"
 
