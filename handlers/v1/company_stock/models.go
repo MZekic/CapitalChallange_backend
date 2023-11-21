@@ -19,3 +19,8 @@ type SellCompanyStockRequest struct {
 	CompanyStockID string `json:"company_stock_id"`
 	Quantity       int    `json:"quantity"`
 }
+
+type CompanyStockListQueryParams struct {
+	Page string
+	PageSize string
+}

@@ -59,3 +59,14 @@ func GetCurrentCompanyStockByTicker(ticker string) (models.CompanyStock, error) 
 
 	return companyStock, nil
 }
+
+
+func GetCompanyStockList(page int, pageSize int)([]models.CompanyStock, error){
+	var companyStockList []models.CompanyStock
+	sqlQuery := "SELECT * FROM company_stock WHERE date < now() - interval '5 day' and date > now() - interval '6 day' LIMIT $1 OFFSET $2"
+	err := database.DB.Select(&companyStockList, sqlQuery, pageSize, (page * pageSize) - pageSize)
+	if err != nil {
+		return companyStockList, err
+	}
+	return companyStockList, nil
+}

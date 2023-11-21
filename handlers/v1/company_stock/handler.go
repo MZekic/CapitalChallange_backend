@@ -6,6 +6,7 @@ import (
 	"capital-challenge-server/polygon"
 	"database/sql"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/u2takey/go-utils/uuid"
@@ -253,4 +254,36 @@ func getUserBalanceAndCompanyStock(userID string, companyStockID string)(models.
 	}
 
 	return userBalance , companyStock, nil
+}
+
+func GetDailyCompanyStockList(c *gin.Context){
+	var params CompanyStockListQueryParams
+	params.Page = c.Query("page")
+	params.PageSize = c.Query("page_size")
+	pageInt, pageSizeInt, err := castStringParamsToInt(params)
+	
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	
+	list, err := dbHelper.GetCompanyStockList(*pageInt, *pageSizeInt)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK,list)
+}
+
+func castStringParamsToInt(params CompanyStockListQueryParams)(*int, *int, error){
+
+	page, err := strconv.Atoi(params.Page)
+	if err != nil {
+		return nil, nil, err
+	}
+	pageSize, err := strconv.Atoi(params.PageSize)
+	if err != nil {
+		return nil , nil, err
+	}
+	return &page, &pageSize, nil
 }
