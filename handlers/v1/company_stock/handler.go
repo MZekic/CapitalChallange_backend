@@ -7,7 +7,6 @@ import (
 	"database/sql"
 	"net/http"
 	"strconv"
-
 	"github.com/gin-gonic/gin"
 	"github.com/u2takey/go-utils/uuid"
 )
@@ -15,6 +14,8 @@ import (
 const (
 	Buy  = "buy"
 	Sell = "sell"
+	DefaultPageSize = "10"
+	DefaultPage = "1"
 )
 
 // GetDailyCompanyStock godoc
@@ -256,6 +257,17 @@ func getUserBalanceAndCompanyStock(userID string, companyStockID string)(models.
 	return userBalance , companyStock, nil
 }
 
+// GetDailyCompanyStockList godoc
+// @Summary      GetDailyCompanyStockList
+// @Description  get daily company stock list
+// @Tags         company_stock
+// @Param        page   query      string  false  "page" Format(string)
+// @Param        page_size  query       string  false  "page_size" Format(string)
+// @Success      200 {object} []models.CompanyStockList
+// @Failure      400
+// @Failure      404
+// @Failure      500
+// @Router       /company-stocks/list [get]
 func GetDailyCompanyStockList(c *gin.Context){
 	var params CompanyStockListQueryParams
 	params.Page = c.Query("page")
@@ -275,7 +287,43 @@ func GetDailyCompanyStockList(c *gin.Context){
 	c.JSON(http.StatusOK,list)
 }
 
+
+// GetHistoricValueOfCompanyStock godoc
+// @Summary      GetHistoricValueOfCompanyStock
+// @Description  get history value of company stock
+// @Tags         company_stock
+// @Param        ticker   path      string  true  "ticker"
+// @Success      200 {object} []models.CompanyStock
+// @Failure      400
+// @Failure      404
+// @Failure      500
+// @Router       /company-stocks/{ticker} [get]
+func GetHistoricValueOfCompanyStock(c *gin.Context){
+	var ticker string
+	ticker = c.Param("ticker")
+	list, err := dbHelper.GetHistoricalValueOfCompanyStock(ticker)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if list == nil {
+		c.JSON(http.StatusOK, gin.H{"message": "No data for required ticker"})
+		return
+	} else {
+		c.JSON(http.StatusOK,list)
+	}
+}
+
 func castStringParamsToInt(params CompanyStockListQueryParams)(*int, *int, error){
+
+	if params.Page == ""{
+		params.Page = DefaultPage
+	}
+
+	if params.PageSize == ""{
+		params.PageSize = DefaultPageSize
+	}
 
 	page, err := strconv.Atoi(params.Page)
 	if err != nil {

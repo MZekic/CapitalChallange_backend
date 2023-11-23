@@ -17,3 +17,8 @@ type CompanyStock struct {
 	CreatedAt                  *time.Time `json:"created_at,omitempty" db:"created_at"`
 	UpdatedAt                  *time.Time `json:"updated_at,omitempty" db:"updated_at"`
 }
+
+type CompanyStockList struct {
+	CompanyStocks []CompanyStock `json:"company_stock"`
+	NumberOfResults int          `json:"number_of_results"`
+}

@@ -60,6 +60,15 @@ definitions:
       volume_weighted_average_price:
         type: number
     type: object
+  models.CompanyStockList:
+    properties:
+      company_stock:
+        items:
+          $ref: '#/definitions/models.CompanyStock'
+        type: array
+      number_of_results:
+        type: integer
+    type: object
   models.UserAssets:
     properties:
       company_stock_id:
@@ -77,6 +86,21 @@ definitions:
       updated_at:
         type: string
       user_id:
+        type: string
+    type: object
+  models.UserTransactionUnit:
+    properties:
+      buy_price:
+        type: number
+      company_stock_id:
+        type: string
+      created_at:
+        type: string
+      quantity:
+        type: integer
+      sell_price:
+        type: number
+      ticker:
         type: string
     type: object
   models.UserTransactions:
@@ -139,15 +163,6 @@ definitions:
       quantity:
         type: integer
     type: object
-  v1companystock.BuyOrSellCompanyStocksRequest:
-    properties:
-      buy_or_sell:
-        type: string
-      company_stock_id:
-        type: string
-      quantity:
-        type: integer
-    type: object
   v1companystock.SellCompanyStockRequest:
     properties:
       company_stock_id:
@@ -159,7 +174,7 @@ definitions:
     properties:
       company_stock:
         items:
-          $ref: '#/definitions/v1userassets.UserAssetsProfitsPerStock'
+          $ref: '#/definitions/v1userassets.UserAssetsStocksInfo'
         type: array
       total_current_value:
         type: number
@@ -170,7 +185,7 @@ definitions:
       total_spent:
         type: number
     type: object
-  v1userassets.UserAssetsProfitsPerStock:
+  v1userassets.UserAssetsStocksInfo:
     properties:
       buy_price:
         type: number
@@ -251,33 +266,29 @@ paths:
       summary: Get Daily Company Stock
       tags:
       - company_stock
-  /company-stocks/{user_id}:
-    post:
-      description: buy or sell the selected amount of company stock
+  /company-stocks/{ticker}:
+    get:
+      description: get history value of company stock
       parameters:
-      - description: user_id
+      - description: ticker
         in: path
-        name: user_id
+        name: ticker
         required: true
         type: string
-      - description: request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/v1companystock.BuyOrSellCompanyStocksRequest'
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.UserTransactions'
+            items:
+              $ref: '#/definitions/models.CompanyStock'
+            type: array
         "400":
           description: Bad Request
         "404":
           description: Not Found
         "500":
           description: Internal Server Error
-      summary: BuyOrSellCompanyStock
+      summary: GetHistoricValueOfCompanyStock
       tags:
       - company_stock
   /company-stocks/buy/{user_id}:
@@ -307,6 +318,36 @@ paths:
         "500":
           description: Internal Server Error
       summary: BuyCompanyStock
+      tags:
+      - company_stock
+  /company-stocks/list:
+    get:
+      description: get daily company stock list
+      parameters:
+      - description: page
+        format: string
+        in: query
+        name: page
+        type: string
+      - description: page_size
+        format: string
+        in: query
+        name: page_size
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.CompanyStockList'
+            type: array
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: GetDailyCompanyStockList
       tags:
       - company_stock
   /company-stocks/sell/{user_id}:
@@ -409,6 +450,61 @@ paths:
       summary: GetUserAssetsValue
       tags:
       - user_assets
+  /user-transactions/{user_id}:
+    get:
+      description: get user transactions
+      parameters:
+      - description: user_id
+        in: path
+        name: user_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.UserTransactionUnit'
+            type: array
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: GetUserTransactions
+      tags:
+      - user_transactions
+  /user-transactions/{user_id}/{ticker}:
+    get:
+      description: get user transactions by ticker
+      parameters:
+      - description: user_id
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: ticker
+        in: path
+        name: ticker
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.UserTransactionUnit'
+            type: array
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: GetUserTransactionsByTicker
+      tags:
+      - user_transactions
   /users/:
     post:
       description: Login user

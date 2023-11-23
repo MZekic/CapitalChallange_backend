@@ -1,9 +1,11 @@
 package middlewares
 
 import (
+	auth "capital-challenge-server/utils"
 	"net/http"
+	"os"
+
 	"github.com/gin-gonic/gin"
-auth "capital-challenge-server/utils"
 )
 
 func JwtAuthMiddleware() gin.HandlerFunc {
@@ -15,5 +17,11 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 			return
 		}
 		c.Next()
+	}
+}
+
+func Auth(c *gin.Context) {
+	if c.Request.Header.Get("x-api-key") != os.Getenv("X_API_KEY") {
+	c.AbortWithStatus(http.StatusForbidden)
 	}
 }

@@ -123,6 +123,51 @@ const docTemplate = `{
                 }
             }
         },
+        "/company-stocks/list": {
+            "get": {
+                "description": "get daily company stock list",
+                "tags": [
+                    "company_stock"
+                ],
+                "summary": "GetDailyCompanyStockList",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "string",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "string",
+                        "description": "page_size",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.CompanyStockList"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/company-stocks/sell/{user_id}": {
             "post": {
                 "description": "sell the selected amount of company stock",
@@ -167,36 +212,30 @@ const docTemplate = `{
                 }
             }
         },
-        "/company-stocks/{user_id}": {
-            "post": {
-                "description": "buy or sell the selected amount of company stock",
+        "/company-stocks/{ticker}": {
+            "get": {
+                "description": "get history value of company stock",
                 "tags": [
                     "company_stock"
                 ],
-                "summary": "BuyOrSellCompanyStock",
+                "summary": "GetHistoricValueOfCompanyStock",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "user_id",
-                        "name": "user_id",
+                        "description": "ticker",
+                        "name": "ticker",
                         "in": "path",
                         "required": true
-                    },
-                    {
-                        "description": "request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v1companystock.BuyOrSellCompanyStocksRequest"
-                        }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.UserTransactions"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.CompanyStock"
+                            }
                         }
                     },
                     "400": {
@@ -304,6 +343,89 @@ const docTemplate = `{
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/models.UserAssets"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/user-transactions/{user_id}": {
+            "get": {
+                "description": "get user transactions",
+                "tags": [
+                    "user_transactions"
+                ],
+                "summary": "GetUserTransactions",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.UserTransactionUnit"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/user-transactions/{user_id}/{ticker}": {
+            "get": {
+                "description": "get user transactions by ticker",
+                "tags": [
+                    "user_transactions"
+                ],
+                "summary": "GetUserTransactionsByTicker",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ticker",
+                        "name": "ticker",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.UserTransactionUnit"
                             }
                         }
                     },
@@ -486,6 +608,20 @@ const docTemplate = `{
                 }
             }
         },
+        "models.CompanyStockList": {
+            "type": "object",
+            "properties": {
+                "company_stock": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.CompanyStock"
+                    }
+                },
+                "number_of_results": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.UserAssets": {
             "type": "object",
             "properties": {
@@ -511,6 +647,29 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserTransactionUnit": {
+            "type": "object",
+            "properties": {
+                "buy_price": {
+                    "type": "number"
+                },
+                "company_stock_id": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "sell_price": {
+                    "type": "number"
+                },
+                "ticker": {
                     "type": "string"
                 }
             }
@@ -608,20 +767,6 @@ const docTemplate = `{
                 }
             }
         },
-        "v1companystock.BuyOrSellCompanyStocksRequest": {
-            "type": "object",
-            "properties": {
-                "buy_or_sell": {
-                    "type": "string"
-                },
-                "company_stock_id": {
-                    "type": "string"
-                },
-                "quantity": {
-                    "type": "integer"
-                }
-            }
-        },
         "v1companystock.SellCompanyStockRequest": {
             "type": "object",
             "properties": {
@@ -639,7 +784,7 @@ const docTemplate = `{
                 "company_stock": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/v1userassets.UserAssetsProfitsPerStock"
+                        "$ref": "#/definitions/v1userassets.UserAssetsStocksInfo"
                     }
                 },
                 "total_current_value": {
@@ -656,7 +801,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1userassets.UserAssetsProfitsPerStock": {
+        "v1userassets.UserAssetsStocksInfo": {
             "type": "object",
             "properties": {
                 "buy_price": {
