@@ -3,7 +3,6 @@ package dbHelper
 import (
 	"capital-challenge-server/database"
 	"capital-challenge-server/models"
-	"log"
 )
 
 func BatchInsertCompanyStock(companyStocks []models.CompanyStock) error {
@@ -90,6 +89,5 @@ func GetHistoricalValueOfCompanyStock(ticker string) ([]models.CompanyStock, err
 	if err != nil {
 		return companyStock, err
 	}
-	log.Println(companyStock,ticker,  "OPET")
 	return companyStock, nil
 }
