@@ -553,7 +553,12 @@ paths:
       summary: Register user
       tags:
       - users
+security:
+- ApiKeyAuth: []
 securityDefinitions:
-  BasicAuth:
-    type: basic
+  ApiKeyAuth:
+    description: x-api-key
+    in: header
+    name: x-api-key
+    type: apiKey
 swagger: "2.0"
