@@ -2,6 +2,7 @@ package polygon
 
 import (
 	"capital-challenge-server/models"
+	"capital-challenge-server/utils"
 	"context"
 	"os"
 	"time"
@@ -9,6 +10,7 @@ import (
 	polygon "github.com/polygon-io/client-go/rest"
 	polygonModels "github.com/polygon-io/client-go/rest/models"
 	"github.com/u2takey/go-utils/uuid"
+	"golang.org/x/exp/slices"
 )
 
 var PolygonClient *polygon.Client
@@ -46,8 +48,8 @@ func GetCompanyInfoByTicker(ticker string) (models.Companies, error) {
 
 func GetDailyCompanyStockInfo() ([]models.CompanyStock, error) {
 	var res []models.CompanyStock
-
-	lastDay := time.Now().AddDate(0, 0, -1)
+	tickers := utils.Tickers()
+	lastDay := time.Now().AddDate(0, 0, -2)
 	year := lastDay.Year()
 	month := lastDay.Month()
 	day := lastDay.Day()
@@ -57,6 +59,7 @@ func GetDailyCompanyStockInfo() ([]models.CompanyStock, error) {
 	if err != nil {
 		return res, err
 	}
+	var isWantedTicker int
 	if resP.ResultsCount > 0 {
 		for _, data := range resP.Results {
 			var companyStock models.CompanyStock
@@ -72,9 +75,14 @@ func GetDailyCompanyStockInfo() ([]models.CompanyStock, error) {
 			companyStock.VolumeWeightedAveragePrice = float32(data.VWAP)
 			companyStock.Date = &lastDay
 
-			res = append(res, companyStock)
+			isWantedTicker = slices.Index(tickers, companyStock.Ticker)
+
+			if isWantedTicker >= 0 {
+				res = append(res, companyStock)
+			}
 		}
 	}
-
 	return res, nil
 }
+
+

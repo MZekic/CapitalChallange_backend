@@ -11,7 +11,6 @@ import (
 	_ "capital-challenge-server/docs"
 
 	"github.com/joho/godotenv"
-	"github.com/robfig/cron"
 )
 
 // @title           Capital-Challenge API
@@ -43,10 +42,10 @@ func main() {
 
 	polygon.StartPolygonClient()
 
-	cronJob := cron.New()
-	cronJob.AddFunc("* * * * *", justPrint)
+	// cronJob := cron.New()
+	// cronJob.AddFunc("* * * * *", justPrint)
 
-	cronJob.Start()
+	// cronJob.Start()
 
 	routes.Run()
 
