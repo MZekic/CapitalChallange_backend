@@ -50,7 +50,3 @@ func main() {
 	routes.Run()
 
 }
-
-func justPrint() {
-	log.Println("JOB JOB JOB")
-}
