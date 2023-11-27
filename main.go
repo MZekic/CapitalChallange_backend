@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"capital-challenge-server/cron"
 	database "capital-challenge-server/database"
 	polygon "capital-challenge-server/polygon"
 	routes "capital-challenge-server/routes"
@@ -42,10 +43,7 @@ func main() {
 
 	polygon.StartPolygonClient()
 
-	// cronJob := cron.New()
-	// cronJob.AddFunc("* * * * *", justPrint)
-
-	// cronJob.Start()
+	cron.GetDailyStocks()
 
 	routes.Run()
 
