@@ -18,7 +18,7 @@ import (
 // @version         1.0
 // @description     Capital-Challenge backend API.
 
-// @host      localhost:8080
+// @host      capital-challenge-server-nameless-cloud-7582.fly.dev
 // @BasePath  /v1
 
 //	@securityDefinitions.apikey	ApiKeyAuth
@@ -28,7 +28,7 @@ import (
 
 // @Security ApiKeyAuth
 func main() {
-	_, dev := os.LookupEnv("ENVIROMENT")
+	_, dev := os.LookupEnv("DEV")
 	if !dev {
 		err := godotenv.Load(".env")
 		if err != nil {

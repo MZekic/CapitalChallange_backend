@@ -217,7 +217,7 @@ definitions:
       value_per_unit:
         type: number
     type: object
-host: localhost:8080
+host: capital-challenge-server-nameless-cloud-7582.fly.dev
 info:
   contact: {}
   description: Capital-Challenge backend API.
