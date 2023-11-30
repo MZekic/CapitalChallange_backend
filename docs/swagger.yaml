@@ -551,6 +551,29 @@ paths:
       summary: Login user
       tags:
       - users
+  /users/{user_id}:
+    get:
+      description: Get User account information
+      parameters:
+      - description: user_id
+        in: path
+        name: user_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Users'
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: GetUser
+      tags:
+      - users
   /users/register:
     post:
       description: Register user
