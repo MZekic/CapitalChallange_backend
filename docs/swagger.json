@@ -6,7 +6,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "localhost:8080",
+    "host": "capital-challenge-server-nameless-cloud-7582.fly.dev",
     "basePath": "/v1",
     "paths": {
         "/companies/{ticker}": {
