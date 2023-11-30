@@ -6,7 +6,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "capital-challenge-server-nameless-cloud-7582.fly.dev",
+    "host": "localhost:8080",
     "basePath": "/v1",
     "paths": {
         "/companies/{ticker}": {
@@ -102,7 +102,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.UserTransactions"
+                            "$ref": "#/definitions/v1companystock.CompanyStockTransactionResponse"
                         }
                     },
                     "400": {
@@ -191,7 +191,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.UserTransactions"
+                            "$ref": "#/definitions/v1companystock.CompanyStockTransactionResponse"
                         }
                     },
                     "400": {
@@ -781,6 +781,17 @@
                 },
                 "quantity": {
                     "type": "integer"
+                }
+            }
+        },
+        "v1companystock.CompanyStockTransactionResponse": {
+            "type": "object",
+            "properties": {
+                "current_balance": {
+                    "type": "number"
+                },
+                "userTransaction": {
+                    "$ref": "#/definitions/models.UserTransactions"
                 }
             }
         },

@@ -108,7 +108,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.UserTransactions"
+                            "$ref": "#/definitions/v1companystock.CompanyStockTransactionResponse"
                         }
                     },
                     "400": {
@@ -197,7 +197,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.UserTransactions"
+                            "$ref": "#/definitions/v1companystock.CompanyStockTransactionResponse"
                         }
                     },
                     "400": {
@@ -790,6 +790,17 @@ const docTemplate = `{
                 }
             }
         },
+        "v1companystock.CompanyStockTransactionResponse": {
+            "type": "object",
+            "properties": {
+                "current_balance": {
+                    "type": "number"
+                },
+                "userTransaction": {
+                    "$ref": "#/definitions/models.UserTransactions"
+                }
+            }
+        },
         "v1companystock.SellCompanyStockRequest": {
             "type": "object",
             "properties": {
@@ -892,7 +903,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "capital-challenge-server-nameless-cloud-7582.fly.dev",
+	Host:             "localhost:8080",
 	BasePath:         "/v1",
 	Schemes:          []string{},
 	Title:            "Capital-Challenge API",

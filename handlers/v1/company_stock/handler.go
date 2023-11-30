@@ -50,7 +50,7 @@ func GetDailyCompanyStock(c *gin.Context) {
 // @Tags         company_stock
 // @Param        user_id   path      string  true  "user_id"
 // @Param        request   body      BuyCompanyStockRequest  true  "request"
-// @Success      200 {object} models.UserTransactions
+// @Success      200 {object} CompanyStockTransactionResponse
 // @Failure      400
 // @Failure      404
 // @Failure      500
@@ -86,22 +86,23 @@ func BuyCompanyStock(c *gin.Context) {
 		return
 	}
 
+	updatedBalance := calculateUserBalance(userBalance.CurrentBalance, req.Quantity, companyStock.VolumeWeightedAveragePrice, Buy)
 	
-	var userTransaction models.UserTransactions
-	userTransaction.ID = uuid.NewUUID()
-	userTransaction.UserID = user.ID
-	userTransaction.CompanyStockID = companyStock.ID
-	userTransaction.Quantity = req.Quantity
-	userTransaction.BuyPrice = companyStock.VolumeWeightedAveragePrice
-
-	err = dbHelper.InsertUserTransaction(userTransaction)
+	err = dbHelper.UpdateUserBalance(user.ID, updatedBalance)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	
+	var userTransaction CompanyStockTransactionResponse
+	userTransaction.UserTransaction.ID = uuid.NewUUID()
+	userTransaction.UserTransaction.UserID = user.ID
+	userTransaction.UserTransaction.CompanyStockID = companyStock.ID
+	userTransaction.UserTransaction.Quantity = req.Quantity
+	userTransaction.UserTransaction.BuyPrice = companyStock.VolumeWeightedAveragePrice
+	userTransaction.CurrentBalance = updatedBalance
 
-	updatedBalance := calculateUserBalance(userBalance.CurrentBalance, req.Quantity, companyStock.VolumeWeightedAveragePrice, Buy)
-	err = dbHelper.UpdateUserBalance(user.ID, updatedBalance)
+	err = dbHelper.InsertUserTransaction(userTransaction.UserTransaction)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -145,7 +146,7 @@ func BuyCompanyStock(c *gin.Context) {
 // @Tags         company_stock
 // @Param        user_id   path      string  true  "user_id"
 // @Param        request   body      SellCompanyStockRequest  true  "request"
-// @Success      200 {object} models.UserTransactions
+// @Success      200 {object} CompanyStockTransactionResponse
 // @Failure      400
 // @Failure      404
 // @Failure      500
@@ -202,14 +203,14 @@ func SellCompanyStock(c *gin.Context) {
 		}
 	}
 
-	var userTransaction models.UserTransactions
-	userTransaction.ID = uuid.NewUUID()
-	userTransaction.UserID = user.ID
-	userTransaction.CompanyStockID = companyStock.ID
-	userTransaction.Quantity = req.Quantity
-	userTransaction.SellPrice = companyStock.VolumeWeightedAveragePrice
-
-	err = dbHelper.InsertUserTransaction(userTransaction)
+	var userTransaction CompanyStockTransactionResponse
+	userTransaction.UserTransaction.ID = uuid.NewUUID()
+	userTransaction.UserTransaction.UserID = user.ID
+	userTransaction.UserTransaction.CompanyStockID = companyStock.ID
+	userTransaction.UserTransaction.Quantity = req.Quantity
+	userTransaction.UserTransaction.SellPrice = companyStock.VolumeWeightedAveragePrice
+	userTransaction.CurrentBalance = updatedBalance
+	err = dbHelper.InsertUserTransaction(userTransaction.UserTransaction)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

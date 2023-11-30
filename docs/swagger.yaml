@@ -178,6 +178,13 @@ definitions:
       quantity:
         type: integer
     type: object
+  v1companystock.CompanyStockTransactionResponse:
+    properties:
+      current_balance:
+        type: number
+      userTransaction:
+        $ref: '#/definitions/models.UserTransactions'
+    type: object
   v1companystock.SellCompanyStockRequest:
     properties:
       company_stock_id:
@@ -232,7 +239,7 @@ definitions:
       value_per_unit:
         type: number
     type: object
-host: capital-challenge-server-nameless-cloud-7582.fly.dev
+host: localhost:8080
 info:
   contact: {}
   description: Capital-Challenge backend API.
@@ -325,7 +332,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.UserTransactions'
+            $ref: '#/definitions/v1companystock.CompanyStockTransactionResponse'
         "400":
           description: Bad Request
         "404":
@@ -384,7 +391,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.UserTransactions'
+            $ref: '#/definitions/v1companystock.CompanyStockTransactionResponse'
         "400":
           description: Bad Request
         "404":
