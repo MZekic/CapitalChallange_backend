@@ -94,7 +94,7 @@ func Registration(c *gin.Context) {
 // @Description  Login user
 // @Tags         users
 // @Param        request   body      UserLoginRequest  true  "request"
-// @Success      200 {object} string
+// @Success      200 {object} models.Users
 // @Failure      400
 // @Failure      404
 // @Failure      500
@@ -126,12 +126,12 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	token, err := utils.GenerateToken(user.ID)
+	_, err = utils.GenerateToken(user.ID)
 	if err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		utils.Log(c, http.StatusInternalServerError)
 		return
 	}
 
-	c.JSON(http.StatusOK, token)
+	c.JSON(http.StatusOK, user)
 }

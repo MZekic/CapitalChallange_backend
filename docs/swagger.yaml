@@ -122,6 +122,21 @@ definitions:
       user_id:
         type: string
     type: object
+  models.Users:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      password:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
   v1Companies.GetCompanyInfoResponse:
     properties:
       company:
@@ -519,7 +534,7 @@ paths:
         "200":
           description: OK
           schema:
-            type: string
+            $ref: '#/definitions/models.Users'
         "400":
           description: Bad Request
         "404":

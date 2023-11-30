@@ -49,7 +49,7 @@ func GetCompanyInfoByTicker(ticker string) (models.Companies, error) {
 func GetDailyCompanyStockInfo() ([]models.CompanyStock, error) {
 	var res []models.CompanyStock
 	tickers := utils.Tickers()
-	lastDay := time.Now().AddDate(0, 0, -2)
+	lastDay := time.Now().AddDate(0, 0, -1)
 	year := lastDay.Year()
 	month := lastDay.Month()
 	day := lastDay.Day()
@@ -84,5 +84,3 @@ func GetDailyCompanyStockInfo() ([]models.CompanyStock, error) {
 	}
 	return res, nil
 }
-
-

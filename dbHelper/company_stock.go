@@ -60,15 +60,16 @@ func GetCurrentCompanyStockByTicker(ticker string) (models.CompanyStock, error) 
 	return companyStock, nil
 }
 
-
-func GetCompanyStockList(page int, pageSize int)(*models.CompanyStockList, error){
+/*
+func GetCompanyStockList(page int, pageSize int) (*models.CompanyStockList, error) {
 	var companyStockList []models.CompanyStock
-	sqlQuery := "SELECT * FROM company_stock WHERE date < now() - interval '7 day' and date > now() - interval '8 day' LIMIT $1 OFFSET $2"
-	err := database.DB.Select(&companyStockList, sqlQuery, pageSize, (page * pageSize) - pageSize)
+
+	sqlQuery := "SELECT * FROM company_stock WHERE date < now() - interval '1 day' and date > now() - interval '2 day' LIMIT $1 OFFSET $2"
+	err := database.DB.Select(&companyStockList, sqlQuery, pageSize, (page*pageSize)-pageSize)
 	if err != nil {
 		return nil, err
 	}
-	sqlQueryCount:= "SELECT COUNT(*) FROM company_stock WHERE date < now() - interval '7 day' and date > now() - interval '8 day'"
+	sqlQueryCount := "SELECT COUNT(*) FROM company_stock WHERE date < now() - interval '1 day' and date > now() - interval '2 day'"
 	var results int
 	err = database.DB.Get(&results, sqlQueryCount)
 	if err != nil {
@@ -77,7 +78,29 @@ func GetCompanyStockList(page int, pageSize int)(*models.CompanyStockList, error
 	var companyStockListWithResultCount models.CompanyStockList
 	companyStockListWithResultCount.CompanyStocks = companyStockList
 	companyStockListWithResultCount.NumberOfResults = results
-	
+
+	return &companyStockListWithResultCount, nil
+}*/
+
+func GetCompanyStockList(page int, pageSize int) (*models.CompanyStockList, error) {
+	var companyStockList []models.CompanyStock
+
+	sqlQuery := "SELECT * FROM company_stock ORDER BY date, id DESC LIMIT $1 OFFSET $2"
+	err := database.DB.Select(&companyStockList, sqlQuery, pageSize, (page*pageSize)-pageSize)
+	if err != nil {
+		return nil, err
+	}
+	/*
+		sqlQueryCount := "SELECT COUNT(*) FROM company_stock WHERE date < now() - interval '1 day' and date > now() - interval '2 day'"
+		var results int
+		err = database.DB.Get(&results, sqlQueryCount)
+		if err != nil {
+			return nil, err
+		}*/
+	var companyStockListWithResultCount models.CompanyStockList
+	companyStockListWithResultCount.CompanyStocks = companyStockList
+	companyStockListWithResultCount.NumberOfResults = 90
+
 	return &companyStockListWithResultCount, nil
 }
 
