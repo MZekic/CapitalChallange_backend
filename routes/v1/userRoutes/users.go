@@ -9,4 +9,5 @@ import (
 func AddUserRoutes(rg *gin.RouterGroup) {
 	rg.POST("/register", v1Users.Registration)
 	rg.POST("/", v1Users.Login)
+	rg.GET("/:user_id", v1Users.GetUser)
 }

@@ -135,3 +135,24 @@ func Login(c *gin.Context) {
 
 	c.JSON(http.StatusOK, user)
 }
+
+// GetUser godoc
+// @Summary      GetUser 
+// @Description  Get User account information
+// @Tags         users
+// @Param        user_id   path      string  true  "user_id"
+// @Success      200 {object} models.Users
+// @Failure      400
+// @Failure      404
+// @Failure      500
+// @Router       /users/{user_id} [get]
+func GetUser(c *gin.Context){
+	userID := c.Param("user_id")
+	user, err := dbHelper.GetUserByID(userID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, user)
+}
+

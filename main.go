@@ -18,7 +18,7 @@ import (
 // @version         1.0
 // @description     Capital-Challenge backend API.
 
-// @host      capital-challenge-server-nameless-cloud-7582.fly.dev
+// @host      localhost:8080
 // @BasePath  /v1
 
 //	@securityDefinitions.apikey	ApiKeyAuth

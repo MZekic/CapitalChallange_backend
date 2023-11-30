@@ -514,6 +514,41 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/users/{user_id}": {
+            "get": {
+                "description": "Get User account information",
+                "tags": [
+                    "users"
+                ],
+                "summary": "GetUser",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Users"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -796,7 +831,7 @@ const docTemplate = `{
                 "current_balance": {
                     "type": "number"
                 },
-                "userTransaction": {
+                "user_transaction": {
                     "$ref": "#/definitions/models.UserTransactions"
                 }
             }

@@ -182,7 +182,7 @@ definitions:
     properties:
       current_balance:
         type: number
-      userTransaction:
+      user_transaction:
         $ref: '#/definitions/models.UserTransactions'
     type: object
   v1companystock.SellCompanyStockRequest:
@@ -549,6 +549,29 @@ paths:
         "500":
           description: Internal Server Error
       summary: Login user
+      tags:
+      - users
+  /users/{user_id}:
+    get:
+      description: Get User account information
+      parameters:
+      - description: user_id
+        in: path
+        name: user_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Users'
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: GetUser
       tags:
       - users
   /users/register:
